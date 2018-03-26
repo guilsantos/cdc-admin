@@ -29,7 +29,7 @@ class App extends Component {
       contentType: 'application/json',
       dataType: 'json',
       type: 'post',
-      data: JSON.stringify({nome:'', email:'', senha:''}),
+      data: JSON.stringify({nome: this.state.nome, email: this.state.email, senha: this.state.bacon}),
       success: function(response){
         console.log('sucesso');
       },
@@ -75,8 +75,8 @@ class App extends Component {
                   <input id="email" type="email" name="email" value="" />
                 </div>
                 <div className="pure-control-group">
-                  <label htmlFor="senha">Senha</label>
-                  <input id="senha" type="password" name="senha" />
+                  <label htmlFor="bacon">Bacon</label>
+                  <input id="bacon" type="password" name="bacon" />
                 </div>
                 <div className="pure-control-group">
                   <label></label>
