@@ -1,8 +1,44 @@
 import React, { Component } from 'react';
 import './css/pure-min.css';
 import './css/side-menu.css';
+import $ from 'jquery';
 
 class App extends Component {
+
+  constructor() {
+    super();
+    this.state = { lista : [] };
+  }
+
+  componentWillMount(){}
+
+  componentDidMount(){
+    $.ajax({
+      url:'http://cdc-react.herokuapp.com/api/autores',
+      dataType: 'json',
+      success: function(response){
+        this.setState({lista: response});
+      }.bind(this)
+    });
+  }
+
+  enviaForm(evento){
+    evento.preventDefault();
+    $.ajax({
+      url: 'http://cdc-react.herokuapp.com/api/autores',
+      contentType: 'application/json',
+      dataType: 'json',
+      type: 'post',
+      data: JSON.stringify({nome:'', email:'', senha:''}),
+      success: function(response){
+        console.log('sucesso');
+      },
+      error: function(response){
+        console.log('erro');
+      }
+    })
+  }
+
   render() {
     return (
       <div id="layout">
@@ -29,7 +65,7 @@ class App extends Component {
 
           <div className="content" id="content">
             <div className="pure-form pure-form-aligned">
-              <form className="pure-form pure-form-aligned">
+              <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="post">
                 <div className="pure-control-group">
                   <label htmlFor="nome">Nome</label>
                   <input id="nome" type="text" name="nome" value="" />
@@ -58,10 +94,16 @@ class App extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Alberto</td>
-                    <td>alberto.souza@caelum.com.br</td>
-                  </tr>
+                  {
+                    this.state.lista.map(function(autor){
+                      return (
+                        <tr key={autor.id}>
+                          <td>{autor.nome}</td>
+                          <td>{autor.email}</td>
+                        </tr>
+                      );
+                    })
+                  }
                 </tbody>
               </table>
             </div>
