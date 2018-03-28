@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import InputCustomizado from './componentes/InputCustomizado';
+import PubSub from 'pubsub-js';
+import TratadorErros from './TratadorErros';
 
 class FormularioAutor extends Component {
 
@@ -23,12 +25,17 @@ class FormularioAutor extends Component {
       type: 'post',
       data: JSON.stringify({nome: this.state.nome, email: this.state.email, senha: this.state.senha}),
       success: function(response){
-				this.props.callbackAtualiza(response);
-        console.log('sucesso');
+				PubSub.publish('lista-autores', response);
+				this.setState({nome:'', email:'', senha: ''});
       }.bind(this),
       error: function(response){
-        console.log('erro');
-      }
+				if(response.status === 400) {
+					new TratadorErros().publicaErros(response.responseJSON);
+				}
+			},
+			beforeSend: function(){
+				new TratadorErros().limpaErros();
+			}
     })
   }
 
@@ -96,17 +103,26 @@ export default class AutorBox extends Component {
 	constructor() {  
     super();
 		this.state = { lista : [] };
-		this.atualizalistagem = this.atualizalistagem.bind(this)
 	}
 
-	atualizalistagem(novaLista){
-		this.setState({lista:novaLista});
+	componentDidMount(){
+    $.ajax({
+      url:'http://cdc-react.herokuapp.com/api/autores',
+      dataType: 'json',
+      success: function(response){
+        this.setState({lista: response});
+      }.bind(this)
+		});
+		
+		PubSub.subscribe('lista-autores', function(topico, response){
+			this.setState({lista: response});
+		}.bind(this));
 	}
 	
 	render() {
 		return (
 			<div className="content" id="content">
-				<FormularioAutor callbackAtualiza={this.atualizalistagem}/>
+				<FormularioAutor/>
         <TabelaAutor lista={this.state.lista}/>
 			</div>
 		)
