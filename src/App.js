@@ -2,42 +2,9 @@ import React, { Component } from 'react';
 import './css/pure-min.css';
 import './css/side-menu.css';
 import $ from 'jquery';
+import AutorBox from './Autor';
 
 class App extends Component {
-
-  constructor() {
-    super();
-    this.state = { lista : [] };
-  }
-
-  componentWillMount(){}
-
-  componentDidMount(){
-    $.ajax({
-      url:'http://cdc-react.herokuapp.com/api/autores',
-      dataType: 'json',
-      success: function(response){
-        this.setState({lista: response});
-      }.bind(this)
-    });
-  }
-
-  enviaForm(evento){
-    evento.preventDefault();
-    $.ajax({
-      url: 'http://cdc-react.herokuapp.com/api/autores',
-      contentType: 'application/json',
-      dataType: 'json',
-      type: 'post',
-      data: JSON.stringify({nome: this.state.nome, email: this.state.email, senha: this.state.bacon}),
-      success: function(response){
-        console.log('sucesso');
-      },
-      error: function(response){
-        console.log('erro');
-      }
-    })
-  }
 
   render() {
     return (
@@ -62,52 +29,7 @@ class App extends Component {
           <div className="header">
             <h1>Autor</h1>
           </div>
-
-          <div className="content" id="content">
-            <div className="pure-form pure-form-aligned">
-              <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="post">
-                <div className="pure-control-group">
-                  <label htmlFor="nome">Nome</label>
-                  <input id="nome" type="text" name="nome" value="" />
-                </div>
-                <div className="pure-control-group">
-                  <label htmlFor="email">Email</label>
-                  <input id="email" type="email" name="email" value="" />
-                </div>
-                <div className="pure-control-group">
-                  <label htmlFor="bacon">Bacon</label>
-                  <input id="bacon" type="password" name="bacon" />
-                </div>
-                <div className="pure-control-group">
-                  <label></label>
-                  <button type="submit" className="pure-button pure-button-primary">Gravar</button>
-                </div>
-              </form>
-
-            </div>
-            <div>
-              <table className="pure-table">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    this.state.lista.map(function(autor){
-                      return (
-                        <tr key={autor.id}>
-                          <td>{autor.nome}</td>
-                          <td>{autor.email}</td>
-                        </tr>
-                      );
-                    })
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <AutorBox/>
         </div>
       </div>
     );
